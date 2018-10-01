@@ -23,6 +23,11 @@ include("../resources/templates/front/header.php");
 
       <header>
             <h1 class="text-center">Login</h1>
+            <h3 class="text-center text-danger"> <?php 
+
+    display_message();
+  ?>
+</h3>
         <div class="col-sm-4 col-sm-offset-5">         
             <form class="" action="" method="post" enctype="multipart/form-data">
                 <div class="form-group"><label for="">
@@ -63,11 +68,4 @@ include("../resources/templates/front/header.php");
     <!-- /.container -->
 
     <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-
-</body>
-
-</html>
+    

@@ -1,5 +1,29 @@
 <?php 
 // helper functions
+
+
+function set_message($msg)
+{
+	if(!empty($msg))
+	{
+		$_SESSION['message'] = $msg;
+
+	}
+	else
+	{
+		$msg= "";
+	}
+}
+
+function display_message()
+{
+	if(isset($_SESSION['message']))
+	{
+		echo $_SESSION['message'];
+		unset($_SESSION['message']);
+	}
+}
+
 function redirect($location)
 {
 	header("Location: $location");
@@ -53,8 +77,8 @@ function get_products()
 					    <h4 class="pull-right">&#x20B9;<?php echo $row['product_price']; ?></h4>
 					    <h4><a href="item.php?id=<?php echo $row['product_id']; ?>"><?php echo $row['product_title']; ?></a>
 					    </h4>
-					    <p><?php echo $row['product_description']; ?> <a target="_blank" href="http://www.bootsnipp.com">Bootsnipp - http://bootsnipp.com</a>.</p>
-					    <a class="btn btn-primary" target="_blank" href="item.php?id=<?php echo $row['product_id']; ?>">Add to cart</a>
+					    <p><?php echo substr($row['product_description'],0,50); ?> <a target="_blank" href="http://www.bootsnipp.com">Bootsnipp - http://bootsnipp.com</a>.</p>
+					    <a class="btn btn-primary" target="_blank" href="cart.php?add=<?php echo $row['product_id']; ?>">Add to cart</a>
 					</div>
 			</div>
 		</div>
@@ -89,8 +113,12 @@ function user_login()
 		confirm($query);
 
 		if(mysqli_num_rows($query) == 0)
+		
 		{
-			redirect("login.php");
+
+			set_message("Wrong username or password");
+			 // redirect("login.php");
+			
 		}
 		else
 		{
@@ -99,7 +127,29 @@ function user_login()
 	}
 }	
 
+function send_message()
+{
+	if(isset($_POST['submit']))
+	{
+		$to = "chaudharydipesh627@gmail.com";
+		$from_name = $_POST['name'];
+		$email = $_POST['email'];
+		$subject = $_POST['subject'];
+		$message = $_POST['message'];
 
+		$header = "FROM: {$from_name} {$email}";
+		$result = mail($to, $subject, $message, $header);
+
+		if(!$result)
+		{
+			echo "ERROR";
+		}
+		else
+		{
+			echo "SENT";
+		}
+	}
+}
 
 
 

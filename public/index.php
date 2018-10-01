@@ -49,7 +49,6 @@ include("../resources/templates/front/header.php");
 
                 <div class="row">
 
-
                      <?php 
                     get_products();
                   ?>
