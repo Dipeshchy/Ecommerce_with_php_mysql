@@ -27,16 +27,18 @@ display_message();
 
  ?></h3>
  <?php 
-if(isset($_SESSION['product_1']))
-{
-echo $_SESSION['product_1'];
-  }
+// if(isset($_SESSION['product_1']))
+// {
+// echo $_SESSION['product_1'];
+//   }
 
   ?>
       <h1>Checkout</h1>
 
 
-<form action="">
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+  <input type="hidden" name="cmd" value="_cart">
+  <input type="hidden" name="business" value="dipeshchaudhary55@gmail.com">
     <table class="table table-striped">
         <thead>
           <tr>
@@ -48,15 +50,26 @@ echo $_SESSION['product_1'];
           </tr>
         </thead>
         <tbody>
-            <tr>
-                <td>apple</td>
-                <td>$23</td>
-                <td>3</td>
-                <td>2</td>
-              <td><a href="cart.php?remove=1">Remove</a></td>
-            </tr>
+          <?php 
+            cart();
+           ?>
         </tbody>
     </table>
+    <?php 
+
+      if(isset($_SESSION['item_quantity']) && $_SESSION['item_quantity'] >=1 )
+      {
+        $paypal_button = <<<DELIMETER
+          <input type="image" name="upload"
+    src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif"
+    alt="PayPal - The safer, easier way to pay online">
+
+DELIMETER;
+    echo $paypal_button;
+      }
+
+     ?>
+  
 </form>
 
 
@@ -64,14 +77,15 @@ echo $_SESSION['product_1'];
 
 <!--  ***********CART TOTALS*************-->
             
-<div class="col-xs-4 pull-right ">
+ <div class="col-xs-4 pull-right ">
 <h2>Cart Totals</h2>
+
 
 <table class="table table-bordered" cellspacing="0">
 
 <tr class="cart-subtotal">
 <th>Items:</th>
-<td><span class="amount">4</span></td>
+<td><span class="amount"> <?php echo isset($_SESSION['item_quantity']) ? $_SESSION['item_quantity']  : $_SESSION['item_quantity'] ="0";  ?></span></td>
 </tr>
 <tr class="shipping">
 <th>Shipping and Handling</th>
@@ -80,7 +94,8 @@ echo $_SESSION['product_1'];
 
 <tr class="order-total">
 <th>Order Total</th>
-<td><strong><span class="amount">$3444</span></strong> </td>
+<td><strong><span class="amount"> &#x20B9;
+  <?php echo isset($_SESSION['item_total']) ? $_SESSION['item_total']  : $_SESSION['item_total'] ="0";  ?> </span></strong> </td>
 </tr>
 
 
@@ -88,33 +103,16 @@ echo $_SESSION['product_1'];
 
 </table>
 
-</div><!-- CART TOTALS-->
+</div>
 
 
- </div><!--Main Content-->
+ </div><!--Main Content
 
 
            <hr>
 
-        <!-- Footer -->
-        <footer>
-            <div class="row">
-                <div class="col-lg-12">
-                    <p>Copyright &copy; Your Website 2030</p>
-                </div>
-            </div>
-        </footer>
+    <?php 
 
+    include("../resources/templates/front/footer.php");
 
-    </div>
-    <!-- /.container -->
-
- <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-
-</body>
-
-</html>
+     ?>

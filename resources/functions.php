@@ -122,6 +122,7 @@ function user_login()
 		}
 		else
 		{
+			$_SESSION['username'] = $username;
 			redirect("admin");
 		}
 	}
@@ -151,6 +152,68 @@ function send_message()
 	}
 }
 
+function cart()
+{
+	$total= 0;
+	$quantity = 0;
+	$item_name =1;
+	$item_number=1;
+	$amount =1;
+	$item_total_quantity=1;
 
+	foreach ($_SESSION as $name => $value) {
+		if($value > 0)
+		{
+
+
+		if(substr($name, 0, 8) == "product_")
+		{
+			$length =strlen($name);
+
+			$id = substr($name, 8, $length);
+
+	$query = query("SELECT * FROM products WHERE product_id=" .escape_string($id)." ");
+	confirm($query);
+
+	while ($row=fetch_array($query)) {
+		$sub_total = $row['product_price'] * $value;
+		$products = <<<DELIMETER
+		    <tr>
+                <td>{$row['product_title']}</td>
+                <td>&#x20B9;{$row['product_price']}</td>
+                <td>{$value}</td>
+                <td>&#x20B9;{$sub_total}</td>
+              <td><a class="btn btn-warning" href="cart.php?remove={$row['product_id']}"><span class="glyphicon glyphicon-minus"></span></a> &nbsp; <a class="btn btn-success" href="cart.php?add={$row['product_id']}"><span class="glyphicon glyphicon-plus"></span></a>&nbsp;<a class="btn btn-danger" href="cart.php?delete={$row['product_id']}"><span class="glyphicon glyphicon-remove"></span></a></td>
+              <input type="hidden" name="item_name_{$item_name}" value="{$row['product_title']}">
+			  <input type="hidden" name="item_number_{$item_number}" value="{$row['product_id']}">
+			  <input type="hidden" name="amount_{$amount}" value="{$row['product_price']}">
+			  <input type="hidden" name="item_total_quantity_{$item_total_quantity}" value="{$value}">
+              
+            </tr>
+DELIMETER;
+            echo $products;
+           $_SESSION['item_total'] = $total +=$sub_total;
+            $_SESSION['item_quantity'] = $quantity+=$value;
+			$item_name +=1;
+			$item_number +=1;
+			$amount +=1;
+			$item_total_quantity +=1;
+           
+            
+	}
+ 
+		}
+
+
+	}
+	
+	}
+
+
+
+
+
+
+}
 
  ?>
