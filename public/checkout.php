@@ -39,6 +39,7 @@ display_message();
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
   <input type="hidden" name="cmd" value="_cart">
   <input type="hidden" name="business" value="dipeshchaudhary55@gmail.com">
+   <input type="hidden" name="currency_code" value="Nepal">
     <table class="table table-striped">
         <thead>
           <tr>

@@ -56,13 +56,86 @@ function fetch_array($result)
 {
 	return mysqli_fetch_array($result);
 }
+
+
+// *******************CREATING TABLE **********/
+
+function creating_products_table()
+{
+	
+	$query = query("CREATE TABLE IF NOT EXISTS ecommerce.products (
+	product_id int AUTO_INCREMENT PRIMARY KEY,
+	product_title varchar(255),
+	product_category_id int(11),
+	product_price int(11),
+	product_quantity int(11),
+	product_description text,
+	short_desc text,
+	product_image text
+	
+	)");
+confirm($query);
+
+}
+
+
+function creating_categories_table()
+{
+	$query= query("CREATE TABLE IF NOT EXISTS ecommerce.categories (
+	cat_id int AUTO_INCREMENT PRIMARY KEY,
+	cat_title varchar(255)
+	)");
+	confirm($query);
+
+}
+
+function creating_order_table()
+{
+	$query = query("CREATE TABLE IF NOT EXISTS ecommerce.orders (
+	order_id int AUTO_INCREMENT PRIMARY KEY,
+	order_amount float,
+	order_transaction varchar(255),
+	order_status varchar(255),
+	
+	order_currency varchar(255)
+	)");
+	confirm($query);
+}
+
+function creating_report_table()
+{
+	$query = query("CREATE TABLE IF NOT EXISTS ecommerce.reports (
+	report_id int(11) AUTO_INCREMENT PRIMARY KEY,
+	product_id int,
+	product_price float,
+	product_quantity int(11)
+	)");
+	confirm($query);
+}
+
+
+function creating_users_table()
+{
+	$query = query("CREATE TABLE IF NOT EXISTS ecommerce.users (
+	user_id int(11) AUTO_INCREMENT PRIMARY KEY,
+	username varchar(255),
+	user_firstname varchar(255),
+	user_lastname varchar(255),
+	user_email varchar(255),
+	user_contact_number int(10),
+	
+	password varchar(255)
+	)");
+	confirm($query);
+}
+
 /************ FRONT END FUNCTION *************/
 
 // get products
 
 function get_products()
 {
-	$query=query("SELECT * FROM products");
+	$query=query("SELECT * FROM ecommerce.products");
 	confirm($query);
 
 	while($row=fetch_array($query))
@@ -72,7 +145,7 @@ function get_products()
 
 		<div class="col-sm-4 col-lg-4 col-md-4">
 			<div class="thumbnail">
-			<a href="item.php?id=<?php echo $row['product_id']; ?>"> <img src="../public/images/images.jpg" alt="" height="5px" width="5px"></a>
+			<a href="item.php?id=<?php echo $row['product_id']; ?>"> <img src="<?php echo $row['product_image']; ?>" alt="" height="5px" width="5px"></a>
 					<div class="caption">
 					    <h4 class="pull-right">&#x20B9;<?php echo $row['product_price']; ?></h4>
 					    <h4><a href="item.php?id=<?php echo $row['product_id']; ?>"><?php echo $row['product_title']; ?></a>
@@ -90,7 +163,7 @@ function get_products()
 
 function get_categories()
 {
-	$query = query("SELECT * FROM categories");
+	$query = query("SELECT * FROM ecommerce.categories");
 	confirm($query);
 
 while($row=fetch_array($query))
@@ -109,7 +182,7 @@ function user_login()
 		$username = escape_string($_POST['username']);
 		$password = escape_string($_POST['password']);
 
-		$query= query("SELECT * FROM users WHERE username = '{$username}' AND password= '{$password}' ");
+		$query= query("SELECT * FROM ecommerce.users WHERE username = '{$username}' AND password= '{$password}' ");
 		confirm($query);
 
 		if(mysqli_num_rows($query) == 0)
@@ -126,7 +199,46 @@ function user_login()
 			redirect("admin");
 		}
 	}
+}
+
+function user_register()
+{
+	if(isset($_POST['submit']))
+	{
+		$username = escape_string($_POST['username']);
+		$user_firstname = escape_string($_POST['user_firstname']);
+		$user_lastname = escape_string($_POST['user_lastname']);
+		$user_email = escape_string($_POST['user_email']);
+		$user_contact_number = escape_string($_POST['user_contact_number']);
+		$password = escape_string($_POST['password']);
+		$repassword = escape_string($_POST['repassword']);
+
+		if($password != $repassword)
+		{
+			set_message("Passwords didn't match");
+		}
+		else
+		{
+
+
+
+		$query= query("INSERT INTO ecommerce.users(username , user_firstname , user_lastname , user_email , user_contact_number , password) VALUES('{$username}' , '{$user_firstname}' , '{$user_lastname}' , '{$user_email}' , '{$user_contact_number}' , '{$password}') ");
+		confirm($query);
+
+		if($query)
+		{
+			?>
+			 <script language='javascript' type="text/javascript">
+			 			alert('Registered Successfully!!');
+</script>
+					?>
+					<?php
+			redirect('index.php');
+		}
+		}
+	}
 }	
+
 
 function send_message()
 {
@@ -172,7 +284,7 @@ function cart()
 
 			$id = substr($name, 8, $length);
 
-	$query = query("SELECT * FROM products WHERE product_id=" .escape_string($id)." ");
+	$query = query("SELECT * FROM ecommerce.products WHERE product_id=" .escape_string($id)." ");
 	confirm($query);
 
 	while ($row=fetch_array($query)) {
@@ -214,6 +326,68 @@ DELIMETER;
 
 
 
+}
+
+function report()
+{
+	$total= 0;
+	$quantity = 0;
+	
+
+	foreach ($_SESSION as $name => $value) {
+		if($value > 0)
+		{
+
+
+		if(substr($name, 0, 8) == "product_")
+		{
+			$length =strlen($name);
+
+			$id = substr($name, 8, $length);
+
+	$query = query("SELECT * FROM ecommerce.products WHERE product_id=" .escape_string($id)." ");
+	confirm($query);
+
+	while ($row=fetch_array($query)) {
+		$product_price = $row['product_price'];
+		$sub_total = $row['product_price'] * $value;
+		
+
+
+
+         $total +=$sub_total;
+            $quantity+=$value;	
+
+            $insert_report= query("INSERT INTO ecommerce.reports(product_id , product_price , product_quantity) VALUES('{$id}' , '{$product_price}' , '{$value}') ");
+            confirm($insert_report);		  
+            }
+ 
+		}
+	}
+	
+	}
+}
+
+// *********** BACKEND ADMIN******************
+
+function add_products()
+{
+	if(isset($_POST['add_product']))
+	{
+		$product_title = escape_string($_POST['product_title']);
+		$product_description = escape_string($_POST['product_description']);
+		$product_price = escape_string($_POST['product_price']);
+		$product_quantity = escape_string($_POST['product_quantity']);
+		$product_category = escape_string($_POST['product_category']);
+		$product_short_desc = escape_string($_POST['product_short_desc']);
+		 $product_image = $_FILES['file']['name'];
+    	$product_image_temp = $_FILES['file']['tmp_name'];
+
+    	move_uploaded_file($product_image_temp, "../images/product_images/$product_image");
+
+    	$query =query("INSERT INTO ecommerce.products(product_title , product_category_id , product_price , product_quantity , product_description , short_desc , product_image) VALUES('{$product_title}' , '{$product_category}' , '{$product_price}' , '{$product_quantity}' , '{$product_description}' , '{$product_short_desc}' , '{$product_image}') ");
+    	confirm($query);
+	}
 }
 
  ?>

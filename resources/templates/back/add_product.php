@@ -1,3 +1,16 @@
+<!-- <?php 
+
+include('location: ../../functions.php');
+
+ ?> -->
+
+ <?php 
+
+add_products();
+
+  ?>
+
+
 <div class="col-md-12">
 
 <div class="row">
@@ -61,14 +74,33 @@
 
     <div class="form-group">
          <label for="product-title">Product Category</label>
-          <hr>
+          <!-- <hr> -->
         <select name="product_category" id="" class="form-control">
-            <option value="">Select Category</option>
+
+           <?php
+            $query="SELECT * FROM ecommerce.categories";
+            $select_categories=mysqli_query($connection,$query);
+            // confirm($select_categories);
+                 while($row=mysqli_fetch_assoc($select_categories))
+                {
+                    
+                 $cat_id = $row['cat_id'];
+                  $cat_title = $row['cat_title'];
+                echo "<option value='{$cat_id}'>{$cat_title}</option>";
+                 }
+            ?>
+           <!--  <option value="">Select Category</option> -->
            
         </select>
 
 
 </div>
+ 
+     <div class="form-group">
+       <label for="product-quantity">Product Quantity</label>
+       <input type="number" name="product_quantity" class="form-control">
+       
+    </div>
 
 
 
@@ -77,21 +109,21 @@
     <!-- Product Brands-->
 
 
-    <div class="form-group">
+   <!--  <div class="form-group">
       <label for="product-title">Product Brand</label>
          <select name="product_brand" id="" class="form-control">
             <option value="">Select Brand</option>
          </select>
-    </div>
+    </div> -->
 
 
 <!-- Product Tags -->
 
 
     <div class="form-group">
-          <label for="product-title">Product Keywords</label>
-          <hr>
-        <input type="text" name="product_tags" class="form-control">
+          <label for="product-title">Product Short Description</label>
+          <!-- <hr> -->
+        <input type="text" name="product_short_desc" class="form-control" size="30">
     </div>
 
     <!-- Product Image -->
@@ -101,7 +133,10 @@
       
     </div>
 
-
+ <div class="form-group">
+        
+        <input type="submit" class="btn btn-primary" name="add_product" value="Add Product">
+    </div>
 
 </aside><!--SIDEBAR-->
 

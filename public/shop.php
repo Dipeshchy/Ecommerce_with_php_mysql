@@ -37,7 +37,7 @@ include("../resources/templates/front/header.php");
 
 <?php 
 
-$query=query("SELECT * FROM products");
+$query=query("SELECT * FROM ecommerce.products");
     confirm($query);
 
     while($row=fetch_array($query))
@@ -51,7 +51,7 @@ $query=query("SELECT * FROM products");
 
             <div class="col-md-3 col-sm-6 hero-feature">
                 <div class="thumbnail">
-                    <img src="http://placehold.it/800x500" alt="">
+                    <img src="<?php echo $row['product_image']; ?>" alt="" height="5px" width="5px">
                     <div class="caption">
                         <h3><?php echo $row['product_title']; ?></h3>
                         <p><?php echo $row['product_description']; ?></p>

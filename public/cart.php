@@ -11,7 +11,7 @@ if(isset($_GET['add']))
 {
 	
 
-	$query =query("SELECT * FROM products WHERE product_id =" . escape_string($_GET['add']));
+	$query =query("SELECT * FROM ecommerce.products WHERE product_id =" . escape_string($_GET['add']));
 	confirm($query);
 
 	while ($row=fetch_array($query)) {
